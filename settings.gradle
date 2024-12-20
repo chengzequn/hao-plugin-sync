@@ -3,5 +3,5 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = 'hao-plugin-sync'
+rootProject.name = 'halo-plugin-todolist'
 

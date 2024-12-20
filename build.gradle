@@ -5,7 +5,7 @@ plugins {
     id "run.halo.plugin.devtools" version "0.2.0"
 }
 
-group 'run.halo.starter'
+group 'run.halo.tutorial'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -21,6 +21,8 @@ repositories {
 
 dependencies {
     implementation platform('run.halo.tools.platform:plugin:2.20.0-SNAPSHOT')
+    implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
     compileOnly 'run.halo.app:api'
 
     testImplementation 'run.halo.app:api'
@@ -57,4 +59,5 @@ build {
 
 halo {
     version = '2.20'
+    debug = true
 }

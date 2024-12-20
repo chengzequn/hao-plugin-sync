@@ -1,172 +1,180 @@
-<script setup lang="ts">
-import confetti from "canvas-confetti";
-import { onMounted } from "vue";
-import RiShareCircleLine from "~icons/ri/share-circle-line";
-import RiCodeBoxLine from "~icons/ri/code-box-line";
-import RiBookReadLine from "~icons/ri/book-read-line";
-import RiComputerLine from "~icons/ri/computer-line";
-import RiArrowRightSLine from "~icons/ri/arrow-right-s-line";
+<template>
+  <div class="container">
+    <h1>文章同步</h1>
+    <form @submit.prevent="handleSubmit">
+      <div class="form-group">
+        <label for="type">选择类型:</label>
+        <div class="radio-group">
+          <label for="type1">
+            <input type="radio" id="type1" value="1" v-model="postVO.type" /> CSDN
+          </label>
+          <label for="type2">
+            <input type="radio" id="type2" value="2" v-model="postVO.type" /> 简书
+          </label>
+          <label for="type3">
+            <input type="radio" id="type3" value="3" v-model="postVO.type" /> 知乎
+          </label>
+          <label for="type4">
+            <input type="radio" id="type4" value="4" v-model="postVO.type" /> 微信公众号
+          </label>
+          <label for="type5">
+            <input type="radio" id="type5" value="5" v-model="postVO.type" /> 博客园
+          </label>
+          <label for="type6">
+            <input type="radio" id="type6" value="6" v-model="postVO.type" /> 阿里云
+          </label>
+          <label for="type7">
+            <input type="radio" id="type7" value="7" v-model="postVO.type" /> 掘金
+          </label>
+          <label for="type8">
+            <input type="radio" id="type8" value="8" v-model="postVO.type" /> 开源中国
+          </label>
+          <label for="type9">
+            <input type="radio" id="type9" value="9" v-model="postVO.type" /> 华为云
+          </label>
+          <label for="type10">
+            <input type="radio" id="type10" value="10" v-model="postVO.type" /> 腾讯云
+          </label>
+        </div>
+      </div>
 
-onMounted(() => {
-  confetti({
-    particleCount: 100,
-    spread: 70,
-    origin: { y: 0.6, x: 0.58 },
-  });
+      <div class="form-group">
+        <label for="url">输入 URL:</label>
+        <input type="text" id="url" v-model="postVO.url" placeholder="请输入 URL" />
+      </div>
+
+      <button type="submit">提交</button>
+    </form>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import axios from 'axios';
+
+export default defineComponent({
+  name: 'HomeView',
+  setup() {
+    const postVO = ref({
+      type: 1,
+      url: ''
+    });
+
+    const handleSubmit = async () => {
+      try {
+        console.log('提交的数据:', postVO.value);
+        const response = await axios.post('/api/submit', postVO.value, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('服务器响应:', response.data);
+      } catch (error) {
+        console.error('提交失败:', error);
+      }
+    };
+
+    return {
+      postVO,
+      handleSubmit
+    };
+  }
 });
 </script>
 
-<template>
-  <section id="plugin-starter">
-    <div class="wrapper">
-      <span class="title"> 你已经成功运行起了插件！ </span>
-      <span class="message">你可以点击下方文档继续下一步</span>
-      <div class="docs">
-        <a
-          href="https://docs.halo.run/developer-guide/plugin/publish"
-          class="docs__box"
-          target="_blank"
-        >
-          <h2 class="docs__box-title"><RiShareCircleLine />发布一个插件</h2>
-          <span class="docs__box-message">
-            了解如何与我们的社区分享您的扩展。
-          </span>
-          <span class="docs__box-arrow">
-            <RiArrowRightSLine />
-          </span>
-        </a>
-        <a
-          href="https://docs.halo.run/category/%E5%9F%BA%E7%A1%80"
-          class="docs__box"
-          target="_blank"
-        >
-          <h2 class="docs__box-title"><RiComputerLine />基础概览</h2>
-          <span class="docs__box-message">
-            了解插件的项目结构、生命周期、资源配置等。
-          </span>
-          <span class="docs__box-arrow">
-            <RiArrowRightSLine />
-          </span>
-        </a>
-        <a
-          href="https://docs.halo.run/developer-guide/plugin/examples/todolist"
-          class="docs__box group"
-          target="_blank"
-        >
-          <h2 class="docs__box-title"><RiBookReadLine />示例插件</h2>
-          <span class="docs__box-message">帮助你从 0 到 1 完成一个插件。</span>
-          <span class="docs__box-arrow">
-            <RiArrowRightSLine />
-          </span>
-        </a>
-        <a
-          href="https://docs.halo.run/category/api-%E5%8F%82%E8%80%83"
-          class="docs__box"
-          target="_blank"
-        >
-          <h2 class="docs__box-title"><RiCodeBoxLine />API 参考</h2>
-          <span class="docs__box-message">插件中的 API 列表。</span>
-          <span class="docs__box-arrow">
-            <RiArrowRightSLine />
-          </span>
-        </a>
-      </div>
-    </div>
-  </section>
-</template>
-
-<style lang="scss" scoped>
-#plugin-starter {
-  height: 100vh;
-  background-color: #f8fafc;
-}
-
-.wrapper {
+<style scoped>
+/* 美化容器和表单 */
+.container {
+  max-width: 100%;
+  width: 100%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  gap: 1.5rem;
+}
 
-  .title {
-    font-weight: 700;
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-  }
+/* 表单标题 */
+h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  width: 100%;
+}
 
-  .message {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    color: #4b5563;
-  }
+/* 表单样式 */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: stretch;
+}
 
-  .docs {
-    display: grid;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 1rem;
-    max-width: 48rem;
+/* 表单组样式 */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    .docs__box {
-      background-color: #fff;
-      border-radius: 0.375rem;
-      padding: 0.75rem;
-      transition-property: all;
-      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      transition-duration: 300ms;
-      cursor: pointer;
-      filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.1))
-        drop-shadow(0 1px 1px rgb(0 0 0 / 0.06));
+/* 单选按钮样式 */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
 
-      &:hover {
-        box-shadow:
-          0 0 0 0px #fff,
-          0 0 0 1px rgb(59 130 246 / 0.5),
-          0 0 #0000;
-      }
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
 
-      .docs__box-title {
-        display: flex;
-        flex-direction: row;
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-        font-weight: 700;
-        margin-bottom: 2rem;
-        gap: 0.5rem;
-        align-items: center;
-      }
+input[type="radio"] {
+  margin-right: 8px;
+}
 
-      .docs__box-message {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        color: #4b5563;
-      }
+/* 输入框样式 */
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s ease;
+  width: 100%; /* 调整输入框宽度 */
+}
 
-      .docs__box-arrow {
-        pointer-events: none;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        transition-property: all;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 150ms;
-        color: #d1d5db;
-      }
+input[type="text"]:focus {
+  border-color: #0066cc;
+  box-shadow: 0 0 5px rgba(0, 102, 204, 0.2);
+}
 
-      &:hover {
-        .docs__box-arrow {
-          color: #9ca3af;
-          transform: translate(00.375rem, 0) rotate(0) skewX(0) skewY(0)
-            scaleX(1) scaleY(1);
-        }
-      }
-    }
-  }
+/* 提交按钮样式 */
+button {
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%; /* 调整按钮宽度 */
+}
 
-  @media (min-width: 640px) {
-    .docs {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
+button:hover {
+  background-color: #0056b3;
+}
+
+button:focus {
+  outline: none;
 }
 </style>
