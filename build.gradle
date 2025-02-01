@@ -22,6 +22,7 @@ repositories {
 dependencies {
     implementation platform('run.halo.tools.platform:plugin:2.20.0-SNAPSHOT')
     implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
     compileOnly 'run.halo.app:api'
 

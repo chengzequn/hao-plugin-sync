@@ -1,12 +1,11 @@
 package cn.threeant.halo.strategy;
 
 import cn.threeant.halo.domain.ArticleVO;
-import cn.threeant.halo.domain.Content;
-import cn.threeant.halo.domain.ContentUpdateParam;
-import cn.threeant.halo.domain.PostRequest;
+import cn.threeant.halo.service.HaloSyncService;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.service.spi.ServiceException;
@@ -39,8 +38,12 @@ import static org.springdoc.core.fn.builders.requestbody.Builder.requestBodyBuil
 import static org.springdoc.webflux.core.fn.SpringdocRouteBuilder.route;
 import static org.springframework.web.reactive.function.server.RequestPredicates.path;
 
+@RequiredArgsConstructor
 @Slf4j
 public class CsdnParserStrategy implements ParserStrategy{
+
+    private HaloSyncService haloSyncService;
+
 
     @Override
     public String parse(String url) {
@@ -48,28 +51,29 @@ public class CsdnParserStrategy implements ParserStrategy{
             Document document = Jsoup.connect(url).get();
 
             //删除空的a标签
-            document.select("a").stream().filter(link->link.text().trim().isEmpty())
+            document.select("a").stream().filter(link -> link.text().trim().isEmpty())
                 .toList().forEach(Element::remove);
 
             Elements title = document.getElementsByClass("title-article");
             Elements tags = document.getElementsByClass("tag-link");
             Elements content = document.getElementsByClass("article_content");
-            if(StringUtils.isBlank(content.toString())){
+            if (StringUtils.isBlank(content.toString())) {
                 throw new ServiceException("抓取文章失败");
             }
 
             String regex = "src=\"(https://img-blog\\.csdnimg\\.cn/[^\"]+)\"";
             String proxyImgUrl = "http://localhost:8090/"; //TODO
             //爬取的是HTML内容，需要转成MD格式的内容
-            String newContent = content.get(0).toString().replaceAll("<code>", "<code class=\"lang-java\">")
-                .replaceAll(regex,proxyImgUrl)
-                .replaceAll("content_views","");
+            String newContent =
+                content.get(0).toString().replaceAll("<code>", "<code class=\"lang-java\">")
+                    .replaceAll(regex, proxyImgUrl)
+                    .replaceAll("content_views", "");
             MutableDataSet options = new MutableDataSet();
 
             String markdown = FlexmarkHtmlConverter.builder(options).build().convert(newContent)
-                .replace("lang-java","java");
+                .replace("lang-java", "java");
 
-            log.info("markdown:{}",markdown);
+            log.info("markdown:{}", markdown);
             // inertArticleAndTags(title,tags,content,markdown,newContent,url);
 
 
@@ -104,9 +108,12 @@ public class CsdnParserStrategy implements ParserStrategy{
             // metadata.setAnnotations(annotations);
             // post.setMetadata(metadata);
 
+            // haloSyncService.sync();
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return null;
     }
-
-
 }
